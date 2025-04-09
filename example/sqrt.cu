@@ -7,8 +7,10 @@ __global__ void some_kernel(float *x, float *y, int size)
   for (int i=0; i < size; ++i)
   {
     float tmp;
-    tmp = x[i] / (x[i]-x[i]);  // div by zero => INF
-    d = sqrt(tmp);             // nan because of sqrt
+    // tmp = x[i] / (x[i]-x[i]);  // div by zero => INF
+    // d = sqrt(tmp);             // nan because of sqrt
+    tmp = rnd64(rnd64(sqrt(rnd64(x + rnd64(1)))) - rnd64(sqrt(x)));
+
   }
 }
 int main(int argc, char **argv)

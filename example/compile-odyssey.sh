@@ -30,13 +30,13 @@ echo "Compiling with expression: $1"
 # - "$TMP_FILE" is the source file we just created
 # - -o $OUTPUT_NAME specifies the output executable name
 # - -arch=native tells nvcc to compile for the current GPU
-nvcc "$TMP_FILE" -o $OUTPUT_NAME -arch=native
+nvcc "$TMP_FILE" -o  $OUTPUT_NAME -arch=native --expt-relaxed-constexpr
 
 # Save the compilation result (0 = success, non-zero = failure)
 RESULT=$?
 
-# Clean up by removing the temporary file
-rm "$TMP_FILE"
+# # Clean up by removing the temporary file
+# rm "$TMP_FILE"
 
 # Report success or failure
 if [ $RESULT -eq 0 ]; then

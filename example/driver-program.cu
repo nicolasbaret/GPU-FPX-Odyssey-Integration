@@ -1,86 +1,61 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <cuda.h>
 #include <cuda_runtime.h>
-#include <math.h>
 
-// Constants
-__device__ const float e = 2.71828182845904523536f;
-__device__ const float pi = 3.14159265358979323846f;
+__device__ double e = 2.71828182845904523536;
+// Device function to compute a math expression with one variable
 
-// This is our device function with the expression directly embedded
-__device__ float dynamic_function(float x) {
-    return DEVICE_FUNCTION_BODY;
+__device__ float compute_expression(float x) {
+    return DEVICE_FUNCTION_BODY;;
 }
-
-__global__ void kernel_function(float* input, float* output, int n) {
+// CUDA kernel to compute expressions
+__global__ void compute_kernel(float* x, float* result, int n) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < n) {
-        if (input[idx] <= 0) {
-            output[idx] = 0.0f;  // default value for invalid inputs
-            return;
-        }
-        
-        output[idx] = dynamic_function(input[idx]);
-        
-        // Debug print for first thread
-        if (idx == 0) {
-            printf("First value - Input: %f, Output: %f\n", input[idx], output[idx]);
-        }
+        result[idx] = compute_expression(x[idx]);
     }
 }
 
-int main(int argc, char **argv) {
-    // Setup data
-    const int N = 1024;
-    size_t size = N * sizeof(float);
+// Host function to set up and launch kernel
+void launch_computation(float* d_x, float* d_result, int n) {
+    int threadsPerBlock = 256;
+    int blocksPerGrid = (n + threadsPerBlock - 1) / threadsPerBlock;
+    compute_kernel<<<blocksPerGrid, threadsPerBlock>>>(d_x, d_result, n);
+}
+
+int main() {
+    const int N = 100;  // Number of elements to process
 
     // Allocate host memory
-    float* h_input = (float*)malloc(size);
-    float* h_output = (float*)malloc(size);
+    float *h_x, *h_result;
+    h_x = (float*)malloc(N * sizeof(float));
+    h_result = (float*)malloc(N * sizeof(float));
 
     // Initialize input data
     for (int i = 0; i < N; i++) {
-        h_input[i] = (float)(i + 1);  // Start from 1 to avoid log(0)
+        h_x[i] = (float)rand() / RAND_MAX * 10.0f - 5.0f;  // Random values between -5 and 5
     }
 
     // Allocate device memory
-    float* d_input;
-    float* d_output;
-    cudaMalloc(&d_input, size);
-    cudaMalloc(&d_output, size);
+    float *d_x, *d_result;
+    cudaMalloc(&d_x, N * sizeof(float));
+    cudaMalloc(&d_result, N * sizeof(float));
 
-    // Copy data to device
-    cudaMemcpy(d_input, h_input, size, cudaMemcpyHostToDevice);
+    // Copy input data to device
+    cudaMemcpy(d_x, h_x, N * sizeof(float), cudaMemcpyHostToDevice);
+    // Launch computation
+    launch_computation(d_x, d_result, N);
 
-    // Launch kernel
-    int threadsPerBlock = 256;
-    int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
-    
-    printf("Executing kernel with expression\n");
-    kernel_function<<<blocksPerGrid, threadsPerBlock>>>(d_input, d_output, N);
+    // Copy results back to host
+    cudaMemcpy(h_result, d_result, N * sizeof(float), cudaMemcpyDeviceToHost);
 
-    // Check for errors
-    cudaError_t err = cudaGetLastError();
-    if (err != cudaSuccess) {
-        printf("CUDA Error: %s\n", cudaGetErrorString(err));
-    }
+    // // Print a few results for verification
+    // for (int i = 0; i < 10; i++) {
+    //     printf("For x = %f, Result = %f\n", h_x[i], h_result[i]);
+    // }
 
-    // Copy result back to host
-    cudaMemcpy(h_output, d_output, size, cudaMemcpyDeviceToHost);
-
-    // Print first few results
-    printf("\nFirst 5 results:\n");
-    for (int i = 0; i < 5; i++) {
-        printf("Input: %f, Output: %f\n", h_input[i], h_output[i]);
-    }
-
-    // Cleanup
-    cudaFree(d_input);
-    cudaFree(d_output);
-    free(h_input);
-    free(h_output);
+    // Clean up
+    free(h_x); free(h_result);
+    cudaFree(d_x); cudaFree(d_result);
 
     return 0;
 }

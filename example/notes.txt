@@ -1,0 +1,9 @@
+* Here are the trace statistics (#nan, #inf) - already reported but report as part of NEW output in Odyssey
+* Here is the additional flow info (#inf came in the input data itself - likewise  #nan)
+* Here is how the incoming inf/nan in an instruction FLOWED to another instruction
+* Here is the length of each flow
+* Here are the kernels in which the flow occurred
+* Here are the GPU-FPX settings under  which the above data is reported by detector / analyzer
+
+
+The only slightly non-trivial task here is the above boldfaced text
