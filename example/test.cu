@@ -4,7 +4,8 @@ __device__ double e = 2.71828182845904523536;
 // Device function to compute a math expression with one variable
 
 __device__ float compute_expression(float x) {
-    return sqrt(x + 1) - sqrt(x);
+    
+    return x + 1;
 }
 // CUDA kernel to compute expressions
 __global__ void compute_kernel(float* x, float* result, int n) {

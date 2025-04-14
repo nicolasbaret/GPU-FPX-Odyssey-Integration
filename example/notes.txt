@@ -1,9 +1,21 @@
 * Here are the trace statistics (#nan, #inf) - already reported but report as part of NEW output in Odyssey
+    -> This is covered by the GPU-FPX Detector Report
+
 * Here is the additional flow info (#inf came in the input data itself - likewise  #nan)
+    ->GPU-FPX unable to do this, so ignore for now
+
 * Here is how the incoming inf/nan in an instruction FLOWED to another instruction
+    ->Covered by the analyzer_result_parser.py script
+
 * Here is the length of each flow
+    ->GPU-FPX unable to do this, so ignore for now
+
 * Here are the kernels in which the flow occurred
+    ->We have control over the kernel, so ignore for now
+
 * Here are the GPU-FPX settings under  which the above data is reported by detector / analyzer
+    ->Do later as the tool develops
 
 
-The only slightly non-trivial task here is the above boldfaced text
+
+add this to output also if there is an issue: cuobjdump --dump-sass <filename> (for example if it compiled to 00, use that)
