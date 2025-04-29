@@ -43,6 +43,6 @@ if __name__ == "__main__":
 
     if exception_flag:
         print(report)
-        # cuobjdump_output = run_cuobjdump("cuda_program")
-        # print("\ncuobjdump output:\n")
-        # print(cuobjdump_output)
+        cuobjdump_output = run_cuobjdump("cuda_program")
+        print("\ncuobjdump output:\n")
+        print(cuobjdump_output)

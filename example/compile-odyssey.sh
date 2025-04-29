@@ -36,7 +36,7 @@ nvcc "$TMP_FILE" -o  $OUTPUT_NAME --expt-relaxed-constexpr
 RESULT=$?
 
 # # Clean up by removing the temporary file
-# rm "$TMP_FILE"
+rm "$TMP_FILE"
 
 # Report success or failure
 if [ $RESULT -eq 0 ]; then

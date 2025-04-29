@@ -5,7 +5,7 @@ __device__ double e = 2.71828182845904523536;
 
 __device__ float compute_expression(float x) {
     
-    return x + 1;
+    return sqrt((x + 1.0)) - sqrt(x);
 }
 // CUDA kernel to compute expressions
 __global__ void compute_kernel(float* x, float* result, int n) {
